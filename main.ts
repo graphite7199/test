@@ -76,11 +76,6 @@ async function requestLoop() {
   requestLoop();
 }
 
-// === cron は外で1回だけ ===
-Deno.cron("Continuous Request", "*/2 * * * *", () => {
-  console.log("running...");
-});
-
 // === 初回起動 ===
 requestLoop();
 
