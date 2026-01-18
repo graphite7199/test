@@ -1,34 +1,31 @@
-# ===== build stage =====
+# Build stage
 FROM node:20-alpine AS builder
-
 WORKDIR /app
 
-# 依存関係（lockfile前提）
+# package.json + package-lock.json をコピー
 COPY package*.json ./
+
+# devDependencies も含めてインストール
 RUN npm ci
 
-# TypeScript 設定とソース
+# ソースコピー & TypeScript コンパイル
 COPY tsconfig.json ./
 COPY main.ts ./
-
-# tsconfig.json を使ってビルド
 RUN npx tsc
 
-# ===== runtime stage =====
+# Production stage
 FROM node:20-alpine
-
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# ビルド成果物のみコピー
+# コンパイル済みファイルだけコピー
 COPY --from=builder /app/dist ./dist
-COPY package*.json ./
 
-# 本番依存のみ
+# 依存関係のみコピーして production モードでインストール
+COPY package*.json ./
 RUN npm ci --omit=dev
 
 EXPOSE 3000
-
 CMD ["node", "dist/main.js"]
