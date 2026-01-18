@@ -1,3 +1,20 @@
+// main.ts
+import express from 'express';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// ここに既存の fetch/setTimeout 処理も残す
+
+
 type GasResponse = {
   url: string | null;
 };
